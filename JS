@@ -1,0 +1,60 @@
+SELECT 
+    CUS_GENDER, COUNT(*) AS TOTAL_CUSTOMERS
+FROM
+    customer c
+        JOIN
+    `order` o ON c.CUS_ID = o.CUS_ID
+WHERE
+    o.ORD_AMOUNT >= 3000
+GROUP BY CUS_GENDER;
+SELECT 
+    o.ORD_ID, p.PRO_NAME
+FROM
+    `order` o
+        JOIN
+    supplier_pricing sp ON o.PRICING_ID = sp.PRICING_ID
+        JOIN
+    product p ON sp.PRO_ID = p.PRO_ID
+WHERE
+    o.CUS_ID = 2;
+SELECT 
+    s.*
+FROM
+    supplier s
+        JOIN
+    supplier_pricing sp ON s.SUPP_ID = sp.SUPP_ID
+GROUP BY s.SUPP_ID
+HAVING COUNT(DISTINCT sp.PRO_ID) > 1;
+SELECT 
+    c.CAT_ID, c.CAT_NAME, p.PRO_NAME, sp.SUPP_PRICE
+FROM
+    category c
+        JOIN
+    product p ON c.CAT_ID = p.CAT_ID
+        JOIN
+    (SELECT 
+        PRO_ID, MIN(SUPP_PRICE) AS MIN_PRICE
+    FROM
+        supplier_pricing
+    GROUP BY PRO_ID) min_price ON p.PRO_ID = min_price.PRO_ID
+        JOIN
+    supplier_pricing sp ON p.PRO_ID = sp.PRO_ID
+                       AND min_price.MIN_PRICE = sp.SUPP_PRICE
+ORDER BY c.CAT_ID;
+SELECT 
+    p.PRO_ID, p.PRO_NAME
+FROM
+    product p
+        JOIN
+    supplier_pricing sp ON p.PRO_ID = sp.PRO_ID
+        JOIN
+    `order` o ON sp.PRICING_ID = o.PRICING_ID
+WHERE
+    o.ORD_DATE > '2021-10-05';
+SELECT 
+    CUS_NAME, CUS_GENDER
+FROM
+    customer
+WHERE
+    CUS_NAME LIKE 'A%'
+        OR CUS_NAME LIKE '%A';
